@@ -11,7 +11,7 @@ import logging
 import string
 log = logging.root
 defaultdict = collections.defaultdict
-import re
+
 
 class DelayedReadDictionary(collections.Mapping):
     """
@@ -27,7 +27,7 @@ class DelayedReadDictionary(collections.Mapping):
         # dict.__init__(*args) doesn't call update for some reason
         if items:
             self.read.update(items)
-        self.list_like=list_like
+        self.list_like = list_like
         self.is_writing = False
 
     def set_file(self, f, is_writing=False):
@@ -67,7 +67,7 @@ class DelayedReadDictionary(collections.Mapping):
             pos, stype = self.delayed[key]
             self.f.seek(pos)
             if not self.is_writing:
-                self.read[key] =  get_from_file(self.f, stype)
+                self.read[key] = get_from_file(self.f, stype)
                 log.debug("Now reading %s: %s", key, self.read[key])
             else:
                 write_to_file(self.f, stype, write_data)
@@ -93,7 +93,6 @@ class DelayedReadDictionary(collections.Mapping):
         # NB this fails regularly, eg when looking for a variable here before
         # globals or if default __contains__ is called
         return self.read[k]
-
 
     def __contains__(self, k):
         # default implementation calls getitem and sees if it throws
@@ -156,6 +155,8 @@ array_compatible_re = re.compile(r"""# any amount of whitepace:
                                      # final acceptable character, type, 3rd group:
                                      ([cbBuhHiIlLfd])
                                 """, re.VERBOSE)
+
+
 def get_from_file(f, stype):
     try:
         m = array_compatible_re.match(stype)
@@ -164,9 +165,12 @@ def get_from_file(f, stype):
             # we use the array.array read class
             # only works on files, not file-like!
             # we make an array with the optional endianness and type:
-            a = array(m[0]+m[2])
+            a = array(m[0] + m[2])
             # then we read from file
-            a.fromfile(f, int(m[1]))
+            try:
+                a.fromfile(f, int(m[1]))
+            except TypeError:
+                a.fromstring(f.read(int(m[1]) * struct.calcsize(m[2])))
             return a
         src = f.read(struct.calcsize(stype))
         assert(len(src) == struct.calcsize(stype))
@@ -178,6 +182,7 @@ def get_from_file(f, stype):
     else:
         return d
 
+
 def write_to_file(f, stype, data):
     log.debug("writing %s as %s", data, stype)
     if isinstance(data, array):
@@ -187,6 +192,7 @@ def write_to_file(f, stype, data):
 
     f.write(struct.pack(stype, *data))
     return data
+
 
 class ParsedGrammar(object):
     """
