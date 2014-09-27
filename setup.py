@@ -14,8 +14,7 @@ setup(
     author = "Matt Murfitt",
     author_email = "murfitt@gmail.com",
     description = "File grammar for reading and writing binary files",
-    license = "License :: OSI Approved :: BSD License",
-    keywords = "hello world example examples",
+    license = "License :: OSI Approved :: MIT License",
     url = "https://github.com/mfm24/FileGrammar",   # project home page, if any
 
 )
