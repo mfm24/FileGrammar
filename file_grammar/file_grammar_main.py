@@ -1,7 +1,7 @@
 # mfm 2014-05-17
 # FileGrammar.py
 # Split from parse_dm3_grtammer into its own module
-
+from __future__ import absolute_import, print_function, division
 import functools
 import struct
 import collections
@@ -391,7 +391,7 @@ class ParsedGrammar(object):
                 else:
                     log.debug("%s IS %s!", name, expected)
 
-            # print "%s is %s" % (name, ret[name])
+            # print("%s is %s" % (name, ret[name]))
         assert io_object is not None
         return io_object
 

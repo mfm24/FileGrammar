@@ -1,5 +1,6 @@
+from __future__ import absolute_import, print_function, division
 import unittest
-from file_grammar import *
+from .file_grammar import *
 from cStringIO import StringIO
 import struct
 import logging
